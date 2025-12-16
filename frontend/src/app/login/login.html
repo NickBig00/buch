@@ -1,0 +1,17 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Buchverwaltung</h1>
+
+    <p class="subtitle">
+      Bitte melde dich an, um Bücher zu suchen und zu verwalten.
+    </p>
+
+    <p *ngIf="error" class="error">
+      Login fehlgeschlagen. Bitte erneut versuchen.
+    </p>
+
+    <button (click)="login()">
+      Login mit Keycloak
+    </button>
+  </div>
+</div>
