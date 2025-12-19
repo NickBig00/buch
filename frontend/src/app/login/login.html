@@ -1,17 +1,13 @@
 <div class="login-container">
-  <div class="login-card">
-    <h1>Buchverwaltung</h1>
+  <h1>Buchverwaltung</h1>
 
-    <p class="subtitle">
-      Bitte melde dich an, um Bücher zu suchen und zu verwalten.
-    </p>
+  <button (click)="login()" [disabled]="loading">
+    {{ loading ? 'Weiterleitung…' : 'Login mit Keycloak' }}
+  </button>
 
-    <p *ngIf="error" class="error">
+    @if (error) {
+    <p class="error">
       Login fehlgeschlagen. Bitte erneut versuchen.
     </p>
-
-    <button (click)="login()">
-      Login mit Keycloak
-    </button>
-  </div>
+  }
 </div>
