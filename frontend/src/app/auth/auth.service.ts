@@ -29,6 +29,7 @@ export class AuthService {
       onLoad: 'check-sso',
       pkceMethod: 'S256',
       checkLoginIframe: false,
+      redirectUri: window.location.origin + '/home',
     });
 
     this.initialized = true;
@@ -42,7 +43,7 @@ export class AuthService {
   }
 
   logout() {
-    return this.keycloak?.logout({ redirectUri: 'http://localhost:4200' });
+    return this.keycloak?.logout({ redirectUri: window.location.origin + '/login' });
   }
 
   isLoggedIn(): boolean {
