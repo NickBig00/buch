@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { AuthService } from './auth/auth.service';
 
 @Component({
@@ -9,9 +9,12 @@ import { AuthService } from './auth/auth.service';
   template: '<router-outlet />',
 })
 export class App implements OnInit {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
-  ngOnInit(): void {
-    this.auth.init(); // läuft NUR im Browser
+  async ngOnInit(): Promise<void> {
+    await this.auth.init(); // läuft NUR im Browser
+    if (this.auth.isLoggedIn() && this.router.url === '/login') {
+      this.router.navigate(['/home']);
+    }
   }
 }
