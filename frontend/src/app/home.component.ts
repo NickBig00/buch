@@ -26,7 +26,7 @@ import { Router } from '@angular/router';
         <ul>
           @for (book of books(); track book.id) {
             <li>
-              <strong>{{ book.titel }}</strong> @if (book.untertitel) { <span>– {{ book.untertitel }}</span> }<br />
+              <strong>{{ book.titel.titel }}</strong> @if (book.titel.untertitel) { <span>– {{ book.titel.untertitel }}</span> }<br />
               <span>ISBN: {{ book.isbn }}</span> | <span>Buchart: {{ book.art }}</span>
             </li>
           }
