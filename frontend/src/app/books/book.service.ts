@@ -26,7 +26,7 @@ export type BookFilter = 'titel' | 'isbn' | 'art';
 @Injectable({ providedIn: 'root' })
 export class BookService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/buch';
+  private apiUrl = 'https://localhost:3000/rest';
 
   /**
    * Sucht Bücher mit dem angegebenen Filter und Suchbegriff.
