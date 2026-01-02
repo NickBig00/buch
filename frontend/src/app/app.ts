@@ -14,7 +14,7 @@ export class App implements OnInit {
   async ngOnInit(): Promise<void> {
     await this.auth.init(); // läuft NUR im Browser
     if (this.auth.isLoggedIn() && this.router.url === '/login') {
-      this.router.navigate(['/home']);
+      void this.router.navigate(['/home']);
     }
   }
 }
