@@ -39,6 +39,23 @@ export type BookPage = {
 
 export type BookSearchParams = Record<string, string | number | boolean | undefined>;
 
+export type BookCreateDto = {
+  isbn: string;
+  rating: number;
+  art?: string;
+  preis: number;
+  rabatt?: number;
+  lieferbar?: boolean;
+  datum?: string;
+  homepage?: string;
+  schlagwoerter?: string[];
+  titel: {
+    titel: string;
+    untertitel?: string;
+  };
+  abbildungen?: unknown;
+};
+
 
 @Injectable({ providedIn: 'root' })
 export class BookService {
@@ -54,7 +71,8 @@ export class BookService {
     page = 0,
     size = 10,
   ): Promise<BookPage> {
-    let params = new HttpParams().set('page', String(page)).set('size', String(size));
+    // Backend erwartet page mit Zählung ab 1 (siehe createPageable)
+    let params = new HttpParams().set('page', String(page + 1)).set('size', String(size));
 
     Object.entries(search).forEach(([key, value]) => {
       if (value === undefined || value === '' || value === null) return;
@@ -73,5 +91,24 @@ export class BookService {
       }
       throw error;
     }
+  }
+
+  /**
+   * Legt ein neues Buch an (REST POST). Backend antwortet mit 201 + Location Header.
+   */
+  async createBook(dto: BookCreateDto): Promise<number | undefined> {
+    const response = await firstValueFrom(
+      this.http.post(this.apiUrl, dto, {
+        observe: 'response',
+        responseType: 'text',
+      }),
+    );
+
+    const location = response.headers.get('Location') ?? undefined;
+    if (!location) return undefined;
+
+    const idString = location.split('/').filter(Boolean).at(-1);
+    const id = idString ? Number(idString) : NaN;
+    return Number.isFinite(id) ? id : undefined;
   }
 }
