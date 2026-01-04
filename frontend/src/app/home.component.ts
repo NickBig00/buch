@@ -12,6 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 type SearchMode =
   | 'all'
@@ -39,11 +40,13 @@ type SearchMode =
     MatCheckboxModule,
     MatRadioModule,
     MatTableModule,
+    MatPaginatorModule,
   ],
   template: `
     <mat-toolbar>
       <span>Buchverwaltung</span>
       <span class="spacer"></span>
+      <button mat-button type="button" (click)="goCreate()">Neu</button>
       <button mat-button type="button" (click)="goHome()">Home</button>
       <button mat-button type="button" (click)="logout()">Logout</button>
     </mat-toolbar>
@@ -264,6 +267,15 @@ type SearchMode =
                 <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
               </table>
             </div>
+
+            <mat-paginator
+              [length]="pageInfo().page.totalElements"
+              [pageIndex]="pageIndex()"
+              [pageSize]="pageSize()"
+              [pageSizeOptions]="pageSizeOptions"
+              (page)="onPage($event)"
+              aria-label="Seitennavigation"
+            />
           } @else {
             <p class="empty">Keine Bücher gefunden.</p>
           }
@@ -421,6 +433,12 @@ export class HomeComponent {
   pageInfo = computed(() => this.pageSignal());
   books = computed(() => this.pageSignal().content);
 
+  pageIndex = signal(0);
+  pageSize = signal(10);
+  pageSizeOptions: ReadonlyArray<number> = [5, 10, 20, 50];
+
+  private lastSearch: Record<string, string | number | boolean | undefined> = {};
+
   displayedColumns: ReadonlyArray<string> = [
     'id',
     'titel',
@@ -439,8 +457,25 @@ export class HomeComponent {
     this.router.navigate(['/home']);
   }
 
+  goCreate() {
+    this.router.navigate(['/books/new']);
+  }
+
   logout() {
     void this.auth.logout();
+  }
+
+  async onPage(event: PageEvent) {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+    await this.loadPage();
+  }
+
+  private async loadPage() {
+    const result = await this.bookService.searchBooks(this.lastSearch, this.pageIndex(), this.pageSize());
+    this.pageSignal.set(result);
+    this.pageIndex.set(result.page.number);
+    this.pageSize.set(result.page.size);
   }
 
   async onSearch(event: Event) {
@@ -484,7 +519,8 @@ export class HomeComponent {
         break;
     }
 
-    const result = await this.bookService.searchBooks(search, 0, 10);
-    this.pageSignal.set(result);
+    this.lastSearch = search;
+    this.pageIndex.set(0);
+    await this.loadPage();
   }
 }
