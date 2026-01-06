@@ -1,6 +1,6 @@
 import { Component, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from './auth/auth.service';
-import { BookService, Book, BookPage } from './books/book.service';
+import { BookService, BookPage } from './books/book.service';
 import { Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
