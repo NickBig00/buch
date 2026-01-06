@@ -82,7 +82,7 @@ import { BookCreateDto, BookService } from './book.service';
                 <mat-label>Preis</mat-label>
                 <input matInput type="number" min="0.01" step="0.01" formControlName="preis" />
                 @if (form.controls.preis.touched && form.controls.preis.invalid) {
-                  <mat-error>Preis muss &gt; 0 sein.</mat-error>
+                  <mat-error>Preis muss > 0 sein.</mat-error>
                 }
               </mat-form-field>
             </div>
