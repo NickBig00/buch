@@ -1,11 +1,15 @@
 
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+
+import { environment } from '../../environments/environment';
 
 
 // Entspricht dem Backend-DTO (siehe BuchDTO und TitelDTO)
 export type Book = {
   id: number;
+  version?: number;
   isbn: string;
   art?: string;
   rating: number;
@@ -14,6 +18,7 @@ export type Book = {
   lieferbar?: boolean;
   datum?: string;
   homepage?: string;
+  schlagwoerter?: string[];
   titel: {
     titel: string;
     untertitel?: string;
@@ -22,24 +27,88 @@ export type Book = {
 
 export type BookFilter = 'titel' | 'isbn' | 'art';
 
+export type BookPage = {
+  content: Book[];
+  page: {
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  };
+};
+
+export type BookSearchParams = Record<string, string | number | boolean | undefined>;
+
+export type BookCreateDto = {
+  isbn: string;
+  rating: number;
+  art?: string;
+  preis: number;
+  rabatt?: number;
+  lieferbar?: boolean;
+  datum?: string;
+  homepage?: string;
+  schlagwoerter?: string[];
+  titel: {
+    titel: string;
+    untertitel?: string;
+  };
+  abbildungen?: unknown;
+};
+
 
 @Injectable({ providedIn: 'root' })
 export class BookService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://localhost:3000/rest';
+  private apiUrl = environment.apiBaseUrl;
 
   /**
-   * Sucht Bücher mit dem angegebenen Filter und Suchbegriff.
-   * Gibt ein Array von Book-Objekten zurück.
+   * Flexible Suche über die REST-Query-Parameter des Backends.
+   * Backend liefert { content, page }.
    */
-  async searchBooks(term: string, filter: BookFilter): Promise<Book[]> {
-    if (!term) return [];
-    // Query-Parameter wie vom Backend erwartet
-    const params: Record<string, string> = {};
-    params[filter] = term;
-    // Das Backend liefert ein Page-Objekt mit content-Array
-    const response = await this.http.get<{ content: Book[] }>(this.apiUrl, { params }).toPromise();
-    // Defensive: Falls kein content vorhanden, leeres Array
-    return response?.content ?? [];
+  async searchBooks(
+    search: BookSearchParams = {},
+    page = 0,
+    size = 10,
+  ): Promise<BookPage> {
+    // Backend erwartet page mit Zählung ab 1 (siehe createPageable)
+    let params = new HttpParams().set('page', String(page + 1)).set('size', String(size));
+
+    Object.entries(search).forEach(([key, value]) => {
+      if (value === undefined || value === '' || value === null) return;
+      params = params.set(key, String(value));
+    });
+
+    try {
+      return await firstValueFrom(this.http.get<BookPage>(this.apiUrl, { params }));
+    } catch (error: unknown) {
+      const httpError = error as HttpErrorResponse;
+      if (httpError.status === 404) {
+        return {
+          content: [],
+          page: { size, number: page + 1, totalElements: 0, totalPages: 0 },
+        };
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Legt ein neues Buch an (REST POST). Backend antwortet mit 201 + Location Header.
+   */
+  async createBook(dto: BookCreateDto): Promise<number | undefined> {
+    const response = await firstValueFrom(
+      this.http.post(this.apiUrl, dto, {
+        observe: 'response',
+        responseType: 'text',
+      }),
+    );
+
+    const location = response.headers.get('Location') ?? undefined;
+    if (!location) return undefined;
+
+    const idString = location.split('/').filter(Boolean).at(-1);
+    const id = idString ? Number(idString) : NaN;
+    return Number.isFinite(id) ? id : undefined;
   }
 }

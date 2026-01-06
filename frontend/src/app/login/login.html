@@ -1,13 +1,26 @@
 <div class="login-container">
-  <h1>Buchverwaltung</h1>
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Buchverwaltung</mat-card-title>
+    </mat-card-header>
 
-  <button (click)="login()" [disabled]="loading">
-    {{ loading ? 'Weiterleitung…' : 'Login mit Keycloak' }}
-  </button>
+    <mat-card-content>
+      <p class="hint">Bitte mit Keycloak anmelden.</p>
 
-    @if (error) {
-    <p class="error">
-      Login fehlgeschlagen. Bitte erneut versuchen.
-    </p>
-  }
+      @if (error) {
+        <p class="error">Login fehlgeschlagen. Bitte erneut versuchen.</p>
+      }
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" (click)="login()" [disabled]="loading">
+        @if (loading) {
+          <mat-spinner diameter="18"></mat-spinner>
+          <span class="btn-label">Weiterleitung…</span>
+        } @else {
+          Login mit Keycloak
+        }
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </div>
