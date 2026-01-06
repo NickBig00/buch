@@ -86,7 +86,7 @@ export class BookService {
       if (httpError.status === 404) {
         return {
           content: [],
-          page: { size, number: page, totalElements: 0, totalPages: 0 },
+          page: { size, number: page + 1, totalElements: 0, totalPages: 0 },
         };
       }
       throw error;
