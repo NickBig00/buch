@@ -104,7 +104,7 @@ import { BookCreateDto, BookService } from './book.service';
 
             <mat-form-field appearance="outline" class="full">
               <mat-label>Homepage (optional)</mat-label>
-              <input matInput type="url" formControlName="homepage" placeholder="https://example.com/" />
+              <input matInput type="url" formControlName="homepage" placeholder="https://example.com" />
             </mat-form-field>
 
             <mat-checkbox formControlName="lieferbar">Lieferbar</mat-checkbox>
