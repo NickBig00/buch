@@ -3,3 +3,5 @@ backend/node_modules
 frontend/test-results
 test-results/
 playwright-report/
+.github/copilot-instructions.md
+**/pnpm-lock.yaml
