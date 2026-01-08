@@ -1,6 +1,6 @@
 
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
 import { environment } from '../../environments/environment';
@@ -64,6 +64,8 @@ export type BookCreateDto = {
   abbildungen?: unknown;
 };
 
+export type BookUpdateDto = BookCreateDto;
+
 
 @Injectable({ providedIn: 'root' })
 export class BookService {
@@ -107,6 +109,40 @@ export class BookService {
    */
   async getBookById(id: number): Promise<BookDetail> {
     return await firstValueFrom(this.http.get<BookDetail>(`${this.apiUrl}/${id}`));
+  }
+
+  async getBookByIdWithEtag(id: number): Promise<{ book: BookDetail; etag?: string }> {
+    const response = await firstValueFrom(
+      this.http.get<BookDetail>(`${this.apiUrl}/${id}`, {
+        observe: 'response',
+      }),
+    );
+    return { book: response.body as BookDetail, etag: response.headers.get('ETag') ?? undefined };
+  }
+
+  /**
+   * Aktualisiert ein vorhandenes Buch.
+   * Backend verlangt If-Match (optimistische Synchronisation).
+   */
+  async updateBook(id: number, dto: BookUpdateDto, ifMatch: string): Promise<{ etag?: string }> {
+    const headers = new HttpHeaders().set('If-Match', ifMatch);
+    const response = await firstValueFrom(
+      this.http.put(`${this.apiUrl}/${id}`, dto, {
+        headers,
+        observe: 'response',
+        responseType: 'text',
+      }),
+    );
+    return { etag: response.headers.get('ETag') ?? undefined };
+  }
+
+  async deleteBook(id: number): Promise<void> {
+    await firstValueFrom(
+      this.http.delete(`${this.apiUrl}/${id}`, {
+        observe: 'response',
+        responseType: 'text',
+      }),
+    );
   }
 
   /**
