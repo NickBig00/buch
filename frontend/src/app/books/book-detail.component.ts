@@ -4,13 +4,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { AuthService } from '../auth/auth.service';
 import { BookDetail, BookService } from './book.service';
 
 @Component({
   selector: 'app-book-detail',
   standalone: true,
-  imports: [MatToolbarModule, MatButtonModule, MatCardModule],
+  imports: [MatToolbarModule, MatButtonModule, MatCardModule, MatSnackBarModule],
   template: `
     <mat-toolbar>
       <button mat-button type="button" (click)="back()">Zurück</button>
@@ -26,6 +28,13 @@ import { BookDetail, BookService } from './book.service';
           } @else if (error()) {
             <p class="error">{{ error() }}</p>
           } @else if (book()) {
+            <div class="actions">
+              <button mat-stroked-button type="button" (click)="edit()">Bearbeiten</button>
+              @if (auth.hasRole('admin')) {
+                <button mat-stroked-button type="button" (click)="remove()">Löschen</button>
+              }
+            </div>
+
             <h2 class="title">{{ book()!.titel.titel }}</h2>
             @if (book()!.titel.untertitel) {
               <p class="subtitle">{{ book()!.titel.untertitel }}</p>
@@ -34,6 +43,9 @@ import { BookDetail, BookService } from './book.service';
             <dl class="grid" aria-label="Buchdetails">
               <dt>ID</dt>
               <dd>{{ book()!.id }}</dd>
+
+              <dt>Version</dt>
+              <dd>{{ book()!.version ?? '-' }}</dd>
 
               <dt>ISBN</dt>
               <dd>{{ book()!.isbn }}</dd>
@@ -104,6 +116,14 @@ import { BookDetail, BookService } from './book.service';
         opacity: 0.8;
       }
 
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-bottom: 12px;
+      }
+
       .grid {
         display: grid;
         grid-template-columns: 140px minmax(0, 1fr);
@@ -133,6 +153,8 @@ export class BookDetailComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private bookService = inject(BookService);
+  readonly auth = inject(AuthService);
+  private snackBar = inject(MatSnackBar);
 
   loading = signal(true);
   error = signal<string | null>(null);
@@ -144,6 +166,32 @@ export class BookDetailComponent {
 
   back() {
     this.router.navigate(['/home']);
+  }
+
+  edit() {
+    const b = this.book();
+    if (!b) return;
+    this.router.navigate(['/books', b.id, 'edit']);
+  }
+
+  async remove() {
+    const b = this.book();
+    if (!b) return;
+    if (!this.auth.hasRole('admin')) return;
+
+    const ok = window.confirm(`Buch mit ID ${b.id} wirklich löschen?`);
+    if (!ok) return;
+
+    try {
+      await this.bookService.deleteBook(b.id);
+      this.snackBar.open('Gelöscht.', 'OK', { duration: 2500 });
+      this.router.navigate(['/home']);
+    } catch (e: any) {
+      const status = typeof e?.status === 'number' ? e.status : undefined;
+      this.snackBar.open(status ? `Fehler ${status} beim Löschen.` : 'Fehler beim Löschen.', 'OK', {
+        duration: 6000,
+      });
+    }
   }
 
   private async load() {
