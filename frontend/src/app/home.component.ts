@@ -264,7 +264,15 @@ type SearchMode =
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: displayedColumns"
+                  class="row-link"
+                  tabindex="0"
+                  (click)="openDetails(row.id)"
+                  (keydown.enter)="openDetails(row.id)"
+                  (keydown.space)="openDetails(row.id)"
+                ></tr>
               </table>
             </div>
 
@@ -390,6 +398,10 @@ type SearchMode =
       :host ::ng-deep .mat-mdc-cell {
         white-space: nowrap;
       }
+
+      .row-link {
+        cursor: pointer;
+      }
       .empty { margin: 0; }
       .count { margin: 0 0 8px; opacity: 0.8; }
     `,
@@ -459,6 +471,10 @@ export class HomeComponent {
 
   goCreate() {
     this.router.navigate(['/books/new']);
+  }
+
+  openDetails(id: number) {
+    this.router.navigate(['/books', id]);
   }
 
   logout() {
