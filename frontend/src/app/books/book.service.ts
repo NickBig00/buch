@@ -25,6 +25,14 @@ export type Book = {
   };
 };
 
+export type BookDetail = Book & {
+  abbildungen?: ReadonlyArray<{
+    id?: number;
+    beschriftung?: string;
+    contentType?: string;
+  }>;
+};
+
 export type BookFilter = 'titel' | 'isbn' | 'art';
 
 export type BookPage = {
@@ -91,6 +99,14 @@ export class BookService {
       }
       throw error;
     }
+  }
+
+  /**
+   * Detailanzeige: Buch anhand seiner ID laden.
+   * Backend: GET /rest/:id
+   */
+  async getBookById(id: number): Promise<BookDetail> {
+    return await firstValueFrom(this.http.get<BookDetail>(`${this.apiUrl}/${id}`));
   }
 
   /**
