@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "gen:cert": "node ./scripts/generate-dev-cert.mjs",
+    "start:https": "pnpm gen:cert && ng serve --proxy-config proxy.conf.json --ssl true --ssl-cert ./.cert/localhost.pem --ssl-key ./.cert/localhost-key.pem",
+    "start:http": "ng serve --proxy-config proxy.conf.json",
+    "start": "pnpm start:https",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -42,6 +45,7 @@
     "@angular/compiler-cli": "^21.0.0",
     "@types/node": "^20.17.19",
     "jsdom": "^27.1.0",
+    "selfsigned": "^2.4.1",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }
