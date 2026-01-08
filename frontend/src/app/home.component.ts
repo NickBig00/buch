@@ -105,18 +105,20 @@ type SearchMode =
                 </mat-form-field>
               }
               @case ('art') {
-                <mat-form-field appearance="outline" class="term">
-                  <mat-label>Buchart</mat-label>
-                  <mat-select
+                <div class="term" role="group" aria-label="Buchart">
+                  <div class="radio-label">Buchart</div>
+                  <mat-radio-group
                     name="art"
                     [value]="artValue()"
-                    (selectionChange)="artValue.set($event.value)"
+                    (change)="artValue.set($event.value)"
+                    class="radio-group"
                   >
-                    <mat-option value="EPUB">EPUB</mat-option>
-                    <mat-option value="HARDCOVER">HARDCOVER</mat-option>
-                    <mat-option value="PAPERBACK">PAPERBACK</mat-option>
-                  </mat-select>
-                </mat-form-field>
+                    <mat-radio-button value="">egal</mat-radio-button>
+                    <mat-radio-button value="EPUB">EPUB</mat-radio-button>
+                    <mat-radio-button value="HARDCOVER">HARDCOVER</mat-radio-button>
+                    <mat-radio-button value="PAPERBACK">PAPERBACK</mat-radio-button>
+                  </mat-radio-group>
+                </div>
               }
               @case ('rating') {
                 <mat-form-field appearance="outline" class="term">
@@ -431,7 +433,7 @@ export class HomeComponent {
   numberValue = signal<number | null>(null);
   dateValue = signal('');
   lieferbarValue = signal<boolean>(true);
-  artValue = signal<'EPUB' | 'HARDCOVER' | 'PAPERBACK'>('EPUB');
+  artValue = signal<'EPUB' | 'HARDCOVER' | 'PAPERBACK' | ''>('');
 
   kwJavascript = signal(false);
   kwTypescript = signal(false);
@@ -513,7 +515,7 @@ export class HomeComponent {
         search['homepage'] = this.textValue().trim();
         break;
       case 'art':
-        search['art'] = this.artValue();
+        search['art'] = this.artValue() || undefined;
         break;
       case 'rating':
         search['rating'] = this.numberValue() ?? undefined;
