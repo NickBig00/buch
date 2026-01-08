@@ -9,7 +9,10 @@
     "start": "pnpm start:https",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:install": "playwright install --with-deps"
   },
   "prettier": {
     "printWidth": 100,
@@ -43,7 +46,9 @@
     "@angular/build": "^21.0.3",
     "@angular/cli": "^21.0.3",
     "@angular/compiler-cli": "^21.0.0",
+    "@playwright/test": "^1.50.1",
     "@types/node": "^20.17.19",
+    "dotenv": "^16.6.1",
     "jsdom": "^27.1.0",
     "selfsigned": "^2.4.1",
     "typescript": "~5.9.2",
