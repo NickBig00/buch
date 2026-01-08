@@ -90,7 +90,14 @@ import { BookCreateDto, BookService } from './book.service';
             <div class="row">
               <mat-form-field appearance="outline" class="col">
                 <mat-label>Rabatt (0..1, optional)</mat-label>
-                <input matInput type="number" min="0.01" max="0.99" step="0.01" formControlName="rabatt" />
+                <input
+                  matInput
+                  type="number"
+                  min="0.01"
+                  max="0.99"
+                  step="0.01"
+                  formControlName="rabatt"
+                />
                 @if (form.controls.rabatt.touched && form.controls.rabatt.hasError('range')) {
                   <mat-error>Rabatt muss zwischen 0 und 1 liegen (exklusiv).</mat-error>
                 }
@@ -104,7 +111,12 @@ import { BookCreateDto, BookService } from './book.service';
 
             <mat-form-field appearance="outline" class="full">
               <mat-label>Homepage (optional)</mat-label>
-              <input matInput type="url" formControlName="homepage" placeholder="https://example.com" />
+              <input
+                matInput
+                type="url"
+                formControlName="homepage"
+                placeholder="https://example.com"
+              />
             </mat-form-field>
 
             <mat-checkbox formControlName="lieferbar">Lieferbar</mat-checkbox>
@@ -132,7 +144,9 @@ import { BookCreateDto, BookService } from './book.service';
         height: auto;
       }
 
-      .spacer { flex: 1; }
+      .spacer {
+        flex: 1;
+      }
 
       .page {
         padding: 16px;
@@ -150,7 +164,10 @@ import { BookCreateDto, BookService } from './book.service';
         min-width: 0;
       }
 
-      .full { width: 100%; min-width: 0; }
+      .full {
+        width: 100%;
+        min-width: 0;
+      }
 
       .row {
         display: flex;
@@ -170,10 +187,14 @@ import { BookCreateDto, BookService } from './book.service';
         gap: 12px;
       }
 
-      button[type='submit'] { width: 100%; }
+      button[type='submit'] {
+        width: 100%;
+      }
 
       @media (min-width: 700px) {
-        button[type='submit'] { width: auto; }
+        button[type='submit'] {
+          width: auto;
+        }
       }
     `,
   ],

@@ -1,10 +1,8 @@
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-
 
 // Entspricht dem Backend-DTO (siehe BuchDTO und TitelDTO)
 export type Book = {
@@ -66,7 +64,6 @@ export type BookCreateDto = {
 
 export type BookUpdateDto = BookCreateDto;
 
-
 @Injectable({ providedIn: 'root' })
 export class BookService {
   private http = inject(HttpClient);
@@ -76,11 +73,7 @@ export class BookService {
    * Flexible Suche über die REST-Query-Parameter des Backends.
    * Backend liefert { content, page }.
    */
-  async searchBooks(
-    search: BookSearchParams = {},
-    page = 0,
-    size = 10,
-  ): Promise<BookPage> {
+  async searchBooks(search: BookSearchParams = {}, page = 0, size = 10): Promise<BookPage> {
     // Backend erwartet page mit Zählung ab 1 (siehe createPageable)
     let params = new HttpParams().set('page', String(page + 1)).set('size', String(size));
 

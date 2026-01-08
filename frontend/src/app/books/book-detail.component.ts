@@ -64,9 +64,13 @@ import { BookDetail, BookService } from './book.service';
 
               <dt>Lieferbar</dt>
               <dd>
-                @if (book()!.lieferbar === true) { ja }
-                @else if (book()!.lieferbar === false) { nein }
-                @else { - }
+                @if (book()!.lieferbar === true) {
+                  ja
+                } @else if (book()!.lieferbar === false) {
+                  nein
+                } @else {
+                  -
+                }
               </dd>
 
               <dt>Datum</dt>
@@ -76,10 +80,16 @@ import { BookDetail, BookService } from './book.service';
               <dd>{{ book()!.homepage ?? '-' }}</dd>
 
               <dt>Schlagwörter</dt>
-              <dd>{{ (book()!.schlagwoerter?.length ?? 0) > 0 ? book()!.schlagwoerter!.join(', ') : '-' }}</dd>
+              <dd>
+                {{
+                  (book()!.schlagwoerter?.length ?? 0) > 0 ? book()!.schlagwoerter!.join(', ') : '-'
+                }}
+              </dd>
 
               <dt>Abbildungen</dt>
-              <dd>{{ (book()!.abbildungen?.length ?? 0) > 0 ? book()!.abbildungen!.length : '-' }}</dd>
+              <dd>
+                {{ (book()!.abbildungen?.length ?? 0) > 0 ? book()!.abbildungen!.length : '-' }}
+              </dd>
             </dl>
           } @else {
             <p>Kein Buch geladen.</p>
@@ -96,7 +106,9 @@ import { BookDetail, BookService } from './book.service';
         height: auto;
       }
 
-      .spacer { flex: 1; }
+      .spacer {
+        flex: 1;
+      }
 
       .page {
         padding: 16px;

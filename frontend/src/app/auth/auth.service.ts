@@ -72,5 +72,4 @@ export class AuthService {
     const roles: unknown = tokenParsed?.resource_access?.[resource]?.roles;
     return Array.isArray(roles) ? roles.includes(role) : false;
   }
-
 }

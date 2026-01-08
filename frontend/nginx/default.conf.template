@@ -1,0 +1,28 @@
+server {
+  listen 443 ssl;
+  server_name localhost;
+
+  ssl_certificate     /certs/localhost.pem;
+  ssl_certificate_key /certs/localhost-key.pem;
+
+  # SPA Routing
+  root /usr/share/nginx/html;
+  index index.html;
+
+  # REST-Proxy zum Backend
+  location /rest {
+    proxy_pass ${API_TARGET};
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    # Backend nutzt lokal oft Self-Signed -> im Container nicht verifizieren
+    proxy_ssl_verify off;
+    proxy_ssl_server_name on;
+  }
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}

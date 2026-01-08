@@ -95,7 +95,14 @@ import { BookDetail, BookUpdateDto, BookService } from './book.service';
               <div class="row">
                 <mat-form-field appearance="outline" class="col">
                   <mat-label>Rabatt (0..1, optional)</mat-label>
-                  <input matInput type="number" min="0.01" max="0.99" step="0.01" formControlName="rabatt" />
+                  <input
+                    matInput
+                    type="number"
+                    min="0.01"
+                    max="0.99"
+                    step="0.01"
+                    formControlName="rabatt"
+                  />
                   @if (form.controls.rabatt.touched && form.controls.rabatt.hasError('range')) {
                     <mat-error>Rabatt muss zwischen 0 und 1 liegen (exklusiv).</mat-error>
                   }
@@ -138,7 +145,9 @@ import { BookDetail, BookUpdateDto, BookService } from './book.service';
         height: auto;
       }
 
-      .spacer { flex: 1; }
+      .spacer {
+        flex: 1;
+      }
 
       .page {
         padding: 16px;
@@ -156,7 +165,10 @@ import { BookDetail, BookUpdateDto, BookService } from './book.service';
         min-width: 0;
       }
 
-      .full { width: 100%; min-width: 0; }
+      .full {
+        width: 100%;
+        min-width: 0;
+      }
 
       .row {
         display: flex;
@@ -176,13 +188,19 @@ import { BookDetail, BookUpdateDto, BookService } from './book.service';
         gap: 12px;
       }
 
-      button[type='submit'] { width: 100%; }
-
-      @media (min-width: 700px) {
-        button[type='submit'] { width: auto; }
+      button[type='submit'] {
+        width: 100%;
       }
 
-      .error { margin: 0; }
+      @media (min-width: 700px) {
+        button[type='submit'] {
+          width: auto;
+        }
+      }
+
+      .error {
+        margin: 0;
+      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -334,13 +352,21 @@ export class BookEditComponent {
       const body = e?.error;
       const msg = typeof body === 'string' && body ? body : undefined;
       if (status === 428) {
-        this.snackBar.open('If-Match fehlt (Precondition Required). Bitte neu laden.', 'OK', { duration: 6000 });
-      } else if (status === 412) {
-        this.snackBar.open('Version ist veraltet (Precondition Failed). Bitte neu laden.', 'OK', { duration: 6000 });
-      } else {
-        this.snackBar.open(status ? `Fehler ${status}${msg ? `: ${msg}` : ''}` : 'Fehler beim Speichern.', 'OK', {
+        this.snackBar.open('If-Match fehlt (Precondition Required). Bitte neu laden.', 'OK', {
           duration: 6000,
         });
+      } else if (status === 412) {
+        this.snackBar.open('Version ist veraltet (Precondition Failed). Bitte neu laden.', 'OK', {
+          duration: 6000,
+        });
+      } else {
+        this.snackBar.open(
+          status ? `Fehler ${status}${msg ? `: ${msg}` : ''}` : 'Fehler beim Speichern.',
+          'OK',
+          {
+            duration: 6000,
+          },
+        );
       }
     } finally {
       this.saving.set(false);

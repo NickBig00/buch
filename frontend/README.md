@@ -1,5 +1,36 @@
 # Frontend
 
+## Design (Figma)
+
+Von Figma kommt nichts automatisch ins Repo. Üblich ist:
+
+- Link zum Figma-Board in der Doku/README
+- optional: Export (PNG/PDF) unter `docs/` ablegen
+
+## Zustandsdiagramm (PlantUML)
+
+Das Zustandsdiagramm liegt unter `docs/zustandsdiagramm.puml` (im Repo-Root).
+
+## Docker (Frontend als Container, HTTPS)
+
+Das Frontend kann als Container gestartet werden und liefert die SPA über HTTPS auf `https://localhost:4200` aus.
+Die HTTPS-Zertifikate werden im Container (self-signed) erzeugt.
+
+Container starten (aus `frontend/`):
+
+`docker compose -f compose.yml up --build`
+
+Hinweis: PostgreSQL/Keycloak werden separat wie im Backend gestartet.
+
+Wichtig: Starte das Frontend nur einmal.
+Sonst kommt es zu `Bind for 0.0.0.0:4200 failed: port is already allocated`.
+Zum Stoppen: `docker compose -f compose.yml down`.
+
+Hinweis:
+
+- `/rest` wird im Container per Nginx an `${API_TARGET}` weitergeleitet (Default: `https://host.docker.internal:3000`).
+- Wenn dein Backend anders läuft, setze `API_TARGET` im `docker-compose.yml` entsprechend.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
 
 ## Development server
@@ -7,7 +38,19 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 To start a local development server, run:
 
 ```bash
-ng serve
+pnpm start
+```
+
+HTTPS (lokal):
+
+```bash
+pnpm start:https
+```
+
+HTTP (lokal):
+
+```bash
+pnpm start:http
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.

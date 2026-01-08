@@ -63,7 +63,9 @@ type SearchMode =
                 (selectionChange)="mode.set($event.value)"
                 aria-label="Filter"
               >
-                @for (f of filters; track f.value) { <mat-option [value]="f.value">{{ f.label }}</mat-option> }
+                @for (f of filters; track f.value) {
+                  <mat-option [value]="f.value">{{ f.label }}</mat-option>
+                }
               </mat-select>
             </mat-form-field>
 
@@ -176,10 +178,16 @@ type SearchMode =
               }
               @case ('keywords') {
                 <div class="keywords" role="group" aria-label="Schlagwörter">
-                  <mat-checkbox [checked]="kwJavascript()" (change)="kwJavascript.set($event.checked)">
+                  <mat-checkbox
+                    [checked]="kwJavascript()"
+                    (change)="kwJavascript.set($event.checked)"
+                  >
                     JavaScript
                   </mat-checkbox>
-                  <mat-checkbox [checked]="kwTypescript()" (change)="kwTypescript.set($event.checked)">
+                  <mat-checkbox
+                    [checked]="kwTypescript()"
+                    (change)="kwTypescript.set($event.checked)"
+                  >
                     TypeScript
                   </mat-checkbox>
                   <mat-checkbox [checked]="kwJava()" (change)="kwJava.set($event.checked)">
@@ -212,7 +220,9 @@ type SearchMode =
                   <th mat-header-cell *matHeaderCellDef>Titel</th>
                   <td mat-cell *matCellDef="let book">
                     {{ book.titel.titel }}
-                    @if (book.titel.untertitel) { – {{ book.titel.untertitel }} }
+                    @if (book.titel.untertitel) {
+                      – {{ book.titel.untertitel }}
+                    }
                   </td>
                 </ng-container>
 
@@ -244,7 +254,13 @@ type SearchMode =
                 <ng-container matColumnDef="lieferbar">
                   <th mat-header-cell *matHeaderCellDef>Lieferbar</th>
                   <td mat-cell *matCellDef="let book">
-                    @if (book.lieferbar === true) { ja } @else if (book.lieferbar === false) { nein } @else { - }
+                    @if (book.lieferbar === true) {
+                      ja
+                    } @else if (book.lieferbar === false) {
+                      nein
+                    } @else {
+                      -
+                    }
                   </td>
                 </ng-container>
 
@@ -261,7 +277,9 @@ type SearchMode =
                 <ng-container matColumnDef="schlagwoerter">
                   <th mat-header-cell *matHeaderCellDef>Schlagwörter</th>
                   <td mat-cell *matCellDef="let book">
-                    {{ (book.schlagwoerter?.length ?? 0) > 0 ? book.schlagwoerter?.join(', ') : '-' }}
+                    {{
+                      (book.schlagwoerter?.length ?? 0) > 0 ? book.schlagwoerter?.join(', ') : '-'
+                    }}
                   </td>
                 </ng-container>
 
@@ -301,7 +319,9 @@ type SearchMode =
         height: auto;
       }
 
-      .spacer { flex: 1; }
+      .spacer {
+        flex: 1;
+      }
 
       /* Mobile: Buttons dürfen in eine zweite Zeile umbrechen */
       @media (max-width: 480px) {
@@ -349,7 +369,7 @@ type SearchMode =
         flex: 1 1 100%;
       }
 
-      button[type="submit"] {
+      button[type='submit'] {
         width: 100%;
         min-width: 0;
         flex: 1 1 100%;
@@ -357,9 +377,19 @@ type SearchMode =
 
       /* ab Tablet: Felder nebeneinander */
       @media (min-width: 700px) {
-        .term { flex: 2; width: auto; min-width: 280px; }
-        .filter { flex: 1; width: auto; min-width: 240px; }
-        button[type="submit"] { width: auto; }
+        .term {
+          flex: 2;
+          width: auto;
+          min-width: 280px;
+        }
+        .filter {
+          flex: 1;
+          width: auto;
+          min-width: 240px;
+        }
+        button[type='submit'] {
+          width: auto;
+        }
       }
 
       .keywords {
@@ -381,7 +411,9 @@ type SearchMode =
         margin-bottom: 4px;
       }
 
-      .hint { opacity: 0.8; }
+      .hint {
+        opacity: 0.8;
+      }
 
       .table-scroll {
         width: 100%;
@@ -404,11 +436,16 @@ type SearchMode =
       .row-link {
         cursor: pointer;
       }
-      .empty { margin: 0; }
-      .count { margin: 0 0 8px; opacity: 0.8; }
+      .empty {
+        margin: 0;
+      }
+      .count {
+        margin: 0 0 8px;
+        opacity: 0.8;
+      }
     `,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {
   private auth = inject(AuthService) as AuthService;
@@ -490,7 +527,11 @@ export class HomeComponent {
   }
 
   private async loadPage() {
-    const result = await this.bookService.searchBooks(this.lastSearch, this.pageIndex(), this.pageSize());
+    const result = await this.bookService.searchBooks(
+      this.lastSearch,
+      this.pageIndex(),
+      this.pageSize(),
+    );
     this.pageSignal.set(result);
     this.pageIndex.set(result.page.number);
     this.pageSize.set(result.page.size);

@@ -9,7 +9,10 @@ import { AuthService } from './auth/auth.service';
   template: '<router-outlet />',
 })
 export class App implements OnInit {
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+  ) {}
 
   async ngOnInit(): Promise<void> {
     await this.auth.init(); // läuft NUR im Browser
