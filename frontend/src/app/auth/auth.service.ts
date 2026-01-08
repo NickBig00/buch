@@ -10,6 +10,9 @@ export class AuthService {
   private initialized = false;
   private initPromise?: Promise<void>;
 
+  // Rollen liegen im Token bei uns typischerweise unter resource_access['nest-client'].roles
+  private readonly defaultResource = 'nest-client';
+
   constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   async init(): Promise<void> {
@@ -59,4 +62,15 @@ export class AuthService {
   getToken(): string | undefined {
     return this.keycloak?.token;
   }
+
+  /**
+   * Prüft eine Keycloak-Rolle.
+   * Standardmäßig wird die Client-Rolle unter resource_access['nest-client'] geprüft.
+   */
+  hasRole(role: string, resource: string = this.defaultResource): boolean {
+    const tokenParsed: any = (this.keycloak as any)?.tokenParsed;
+    const roles: unknown = tokenParsed?.resource_access?.[resource]?.roles;
+    return Array.isArray(roles) ? roles.includes(role) : false;
+  }
+
 }
