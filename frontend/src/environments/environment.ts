@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'https://localhost:3000/rest',
+  apiBaseUrl: '/rest',
   keycloak: {
     url: 'https://localhost:8843',
     realm: 'nest',
