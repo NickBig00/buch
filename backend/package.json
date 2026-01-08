@@ -36,7 +36,7 @@
   "scripts": {
     "prebuild": "pnpm run clean",
     "build": "nest build",
-    "start": "node --env-file=.env dist/src/main.js",
+    "start": "node --env-file=.env dist/main.js",
     "pre:dev": "pnpm run copy-resources",
     "dev": "nest start --env-file=.env --watch",
     "test": "SET NODE_TLS_REJECT_UNAUTHORIZED=0&& vitest --ui",
