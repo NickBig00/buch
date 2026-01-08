@@ -1,0 +1,60 @@
+@startuml zustandsdiagramm
+
+title Buchverwaltung SPA – Zustandsdiagramm (Aufgabe 3)
+
+top to bottom direction
+
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam linetype ortho
+skinparam nodesep 25
+skinparam ranksep 35
+
+[*] --> Unauthenticated
+
+state "Unauthenticated" as Unauthenticated {
+  [*] --> LoginScreen
+  LoginScreen --> LoginRedirect : Login mit Keycloak
+  LoginRedirect --> LoginError : Callback/Token ungültig
+  LoginRedirect --> LoginScreen : Abbruch/Timeout
+  LoginError --> LoginScreen : Erneut versuchen
+}
+
+state "Authenticated" as Authenticated {
+  [*] --> Home
+
+  state "Liste" as ListFlow {
+    Home --> Searching : Suchen
+    Searching --> Results : Ergebnisse geladen
+    Searching --> HomeError : Fehler (Backend/Token)
+    HomeError --> Home : Erneut versuchen
+    Results : Paging (Next/Prev/PageSize)
+  }
+
+  state "Detail" as DetailFlow {
+    Detail --> Results : Zurück
+    Detail --> Edit : Bearbeiten
+    Detail --> DeleteConfirm : Löschen (nur Admin)
+    DeleteConfirm --> Results : Löschen bestätigt
+    DeleteConfirm --> Detail : Abbrechen
+    Edit --> Detail : Speichern ok (If-Match)
+    Edit --> EditConflict : 412 Precondition Failed
+    Edit --> EditPrecondition : 428 Precondition Required
+    EditConflict --> Edit : Neu laden & erneut speichern
+    EditPrecondition --> Edit : ETag laden & erneut speichern
+  }
+
+  state "Neu" as CreateFlow {
+    Create --> Results : Speichern ok
+    Create --> CreateValidationError : Validierung fehlgeschlagen
+    CreateValidationError --> Create : Eingaben korrigieren
+  }
+
+  Results --> Detail : Zeile anklicken
+  Results --> Create : Neu
+}
+
+Unauthenticated.LoginRedirect --> Authenticated : Callback ok
+Authenticated --> Unauthenticated : Logout / Token abgelaufen
+
+@enduml
