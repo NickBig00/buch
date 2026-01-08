@@ -1,0 +1,18 @@
+# verhindert, dass lokale Artefakte ins Image kopiert werden
+node_modules/
+.angular/
+dist/
+
+# E2E/Reports
+test-results/
+playwright-report/
+
+# lokale Dev-Zertifikate (im Container werden eigene erzeugt)
+.cert/
+
+# Editor/Repo
+.vscode/
+.git/
+
+# Logs
+*.log

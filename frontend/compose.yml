@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build:
+      context: .
+    ports:
+      - "4200:443"
+    environment:
+      # Backend läuft typischerweise separat und ist via Host-Port 3000 erreichbar.
+      # Docker Desktop (Windows/macOS): host.docker.internal
+      - API_TARGET=https://host.docker.internal:3000
