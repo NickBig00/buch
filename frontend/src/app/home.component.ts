@@ -442,13 +442,13 @@ export class HomeComponent {
 
   private pageSignal = signal<BookPage>({
     content: [],
-    page: { size: 10, number: 0, totalElements: 0, totalPages: 0 },
+    page: { size: 5, number: 0, totalElements: 0, totalPages: 0 },
   });
   pageInfo = computed(() => this.pageSignal());
   books = computed(() => this.pageSignal().content);
 
   pageIndex = signal(0);
-  pageSize = signal(10);
+  pageSize = signal(5);
   pageSizeOptions: ReadonlyArray<number> = [5, 10, 20, 50];
 
   private lastSearch: Record<string, string | number | boolean | undefined> = {};
